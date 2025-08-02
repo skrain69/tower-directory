@@ -47,8 +47,21 @@
         color: #cce5ff; /* Lighter on hover for visibility */
       }
 
-      body {
+      html {
+        height: 100%;
         margin: 0;
+      }
+
+      .page-container {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
         font-family: var(--font-family);
         background-color: var(--bg-light);
         color: var(--text-light);
@@ -136,6 +149,11 @@
         cursor: pointer;
       }
 
+      header,
+      .controls,
+      table {
+        flex-shrink: 0;
+      }
       /* tr:nth-child(even) {
         background-color: #f2f2f2;
       } */
@@ -158,6 +176,46 @@
         gap: 0.5rem;
       }
 
+      .site-footer {
+        margin-top: auto;
+        padding: 0.5rem 1rem;
+        background: var(--accent);
+        color: #fff;
+        text-align: center;
+        font-family: var(--font-family);
+        transition: background-color 0.3s ease;
+      }
+
+      /* When content is short, stick footer */
+      .sticky-footer .site-footer {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+      }
+
+      .site-footer a {
+        color: #cce5ff;
+        text-decoration: none;
+      }
+
+      .site-footer a:hover {
+        text-decoration: underline;
+      }
+
+      /* Match dark mode */
+      body.dark .site-footer {
+        background-color: #111;
+        color: #ccc;
+      }
+
+      body.dark .site-footer a {
+        color: #88bfff;
+      }
+
+      
+
+      /* Media Query */
       @media (max-width: 768px) {
         .controls {
           flex-direction: column;
@@ -212,509 +270,526 @@
     </style>
   </head>
   <body>
-    <header>MNL TWR Online Directory</header>
+    <div class="page-container">
+      <header>MNL TWR Online Directory</header>
 
-    <div class="controls">
-      <div class="dark-toggle">
-        <input type="checkbox" id="darkToggle" />
-        <label for="darkToggle">Dark Mode</label>
+      <div class="controls">
+        <div class="dark-toggle">
+          <input type="checkbox" id="darkToggle" />
+          <label for="darkToggle">Dark Mode</label>
+        </div>
+
+        <input type="text" id="searchInput" placeholder="Search WS" />
+
+        <div>
+          <button onclick="copyTable()">Copy</button>
+          <button onclick="exportToExcel()">Excel</button>
+          <button onclick="exportToPDF()">PDF</button>
+        </div>
       </div>
 
-      <input type="text" id="searchInput" placeholder="Search WS" />
+      <table id="directoryTable">
+        <thead>
+          <tr>
+            <th onclick="sortTable(0)">WS</th>
+            <th onclick="sortTable(1)">Mobile</th>
+            <th onclick="sortTable(2)">Email</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="WS">AB</td>
+            <td data-label="Mobile">
+              <a href="tel:09694873703">0969 487 3703</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:brionesalexanderemmanuel@gmail.com"
+                >brionesalexanderemmanuel@gmail.com</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">AE</td>
+            <td data-label="Mobile">
+              <a href="tel:09175900383">0917 590 0383</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:ae.umotoy@gmail.com">ae.umotoy@gmail.com</a>
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">AL</td>
+            <td data-label="Mobile">
+              <a href="tel:09568307294">0956 830 7294</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:mkmanabat@gmail.com">mkmanabat@gmail.com</a>
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">AO</td>
+            <td data-label="Mobile">
+              <a href="tel:09190032873">0919 003 2873</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:joaz.lagundino@gmail.com"
+                >joaz.lagundino@gmail.com</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">BI</td>
+            <td data-label="Mobile">
+              <a href="tel:09175822660">0917 582 2660</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:mhel_b28@yahoo.com">mhel_b28@yahoo.com</a>
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">BH</td>
+            <td data-label="Mobile">
+              <a href="tel:09298468980">0929 846 8980</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:pfvespino@gmail.com">pfvespino@gmail.com</a>
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">BM</td>
+            <td data-label="Mobile">
+              <a href="tel:09338787129">0933 878 7129</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:femalte333@yahoo.com">femalte333@yahoo.com</a>
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">BU</td>
+            <td data-label="Mobile">
+              <a href="tel:09175135770">0917 513 5770</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:b.collantes54@gmail.com"
+                >b.collantes54@gmail.com</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">CJ</td>
+            <td data-label="Mobile">
+              <a href="tel:09950388227">0995 038 8227</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:sikatuna05@gmail.com">sikatuna05@gmail.com</a>
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">DN</td>
+            <td data-label="Mobile">
+              <a href="tel:09661622709">0966 162 2709</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:earlross.espere@gmail.com"
+                >earlross.espere@gmail.com</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">EO</td>
+            <td data-label="Mobile">
+              <a href="tel:09266914063">0926 691 4063</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:catmunansolomoniii@gmail.com"
+                >catmunansolomoniii@gmail.com</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">EQ</td>
+            <td data-label="Mobile">
+              <a href="tel:09308588000">0930 858 8000</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:eusalemq@gmail.com">eusalemq@gmail.com</a>
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">EZ</td>
+            <td data-label="Mobile">
+              <a href="tel:09162399568">0916 239 9568</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:brenda_vibal@yahoo.com">brenda_vibal@yahoo.com</a>
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">FS</td>
+            <td data-label="Mobile">
+              <a href="tel:09171602910">0917 160 2910</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:phicsulliville@gmail.com"
+                >phicsulliville@gmail.com</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">GK</td>
+            <td data-label="Mobile">
+              <a href="tel:09954598095">0995 459 8095</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:jgbalomaga14@gmail.com">jgbalomaga14@gmail.com</a>
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">HY</td>
+            <td data-label="Mobile">
+              <a href="tel:09178365785">0917 836 5785</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:hilaryclaudio@gmail.com"
+                >hilaryclaudio@gmail.com</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">HZ</td>
+            <td data-label="Mobile">
+              <a href="tel:09778047228">0977 804 7228</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:mayhyacinth_gocotano@yahoo.com"
+                >mayhyacinth_gocotano@yahoo.com</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">ID</td>
+            <td data-label="Mobile">
+              <a href="tel:09365667363">0936 566 7363</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:floyd.e.aquino@gmail.com"
+                >floyd.e.aquino@gmail.com</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">II</td>
+            <td data-label="Mobile">
+              <a href="tel:09280674953">0928 067 4953</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:itsme_bourne28@live.com"
+                >itsme_bourne28@live.com</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">JL</td>
+            <td data-label="Mobile">
+              <a href="tel:09239534662">0923 953 4662</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:jcbanthony@yahoo.com">jcbanthony@yahoo.com</a>
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">JV</td>
+            <td data-label="Mobile">
+              <a href="tel:09054285214">0905 428 5214</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:jovenciourbien.aero@gmail.com"
+                >jovenciourbien.aero@gmail.com</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">KI</td>
+            <td data-label="Mobile">
+              <a href="tel:09271796346">0927 179 6346</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:kinette.aaronm@gmail.com"
+                >kinette.aaronm@gmail.com</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">KH</td>
+            <td data-label="Mobile">
+              <a href="tel:09993418859">0999 341 8859</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:andreitrinidad067@gmail.com"
+                >andreitrinidad067@gmail.com</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">LF</td>
+            <td data-label="Mobile">
+              <a href="tel:09171233125">0917 123 3125</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:lyell.escoto@gmail.com">lyell.escoto@gmail.com</a>
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">LQ</td>
+            <td data-label="Mobile">
+              <a href="tel:09152042772">0915 204 2772</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:rainier.suico@gmail.com"
+                >rainier.suico@gmail.com</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">LV</td>
+            <td data-label="Mobile">
+              <a href="tel:09239286912">0923 928 6912</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:jericavillamor090@gmail.com"
+                >jericavillamor090@gmail.com</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">MH</td>
+            <td data-label="Mobile">
+              <a href="tel:09178998129">0917 899 8129</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:edcelcelestino@gmail.com"
+                >edcelcelestino@gmail.com</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">NI</td>
+            <td data-label="Mobile">
+              <a href="tel:09173179909">0917 317 9909</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:manelvillar20@yahoo.com"
+                >manelvillar20@yahoo.com</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">OO</td>
+            <td data-label="Mobile">
+              <a href="tel:09065965697">0906 596 5697</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:jetmatantenor14@gmail.com"
+                >jetmatantenor14@gmail.com</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">OT</td>
+            <td data-label="Mobile">
+              <a href="tel:09260392932">0926 039 2932</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:rormartin47@gmail.com">rormartin47@gmail.com</a>
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">OZ</td>
+            <td data-label="Mobile">
+              <a href="tel:09171185985">0917 118 5985</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:angelicamariesgsantiago@gmail.com"
+                >angelicamariesgsantiago@gmail.com</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">PJ</td>
+            <td data-label="Mobile">
+              <a href="tel:09951755578">0995 175 5578</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:jaime.formanes@gmail.com"
+                >jaime.formanes@gmail.com</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">PO</td>
+            <td data-label="Mobile">
+              <a href="tel:09175860128">0917 586 0128</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:claid.prieto@gmail.com">claid.prieto@gmail.com</a>
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">PQ</td>
+            <td data-label="Mobile">
+              <a href="tel:09177900726">0917 790 0726</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:aian_pascua@yahoo.com">aian_pascua@yahoo.com</a>
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">PU</td>
+            <td data-label="Mobile">
+              <a href="tel:09224795074">0922 479 5074</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:plaganao@gmail.com">plaganao@gmail.com</a>
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">PV</td>
+            <td data-label="Mobile">
+              <a href="tel:09994078050">0999 407 8050</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:ernesto.botin.v@gmail.com"
+                >ernesto.botin.v@gmail.com</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">QP</td>
+            <td data-label="Mobile">
+              <a href="tel:09279152979">0927 915 2979</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:monettemalasmas@gmail.com"
+                >monettemalasmas@gmail.com</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">QZ</td>
+            <td data-label="Mobile">
+              <a href="tel:09772447224">0977 244 7224</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:urbiztondorenanjoseph@gmail.com"
+                >urbiztondorenanjoseph@gmail.com</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">RU</td>
+            <td data-label="Mobile">
+              <a href="tel:09453626109">0945 362 6109</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:r_licupa@yahoo.com">r_licupa@yahoo.com</a>
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">SA</td>
+            <td data-label="Mobile">
+              <a href="tel:09214620386">0921 462 0386</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:alcidsheila@gmail.com">alcidsheila@gmail.com</a>
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">SP</td>
+            <td data-label="Mobile">
+              <a href="tel:09275808907">0927 580 8907</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:stepmaygramirez31@gmail.com"
+                >stepmaygramirez31@gmail.com</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">SY</td>
+            <td data-label="Mobile">
+              <a href="tel:09688800116">0968 880 0116</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:engrkristianneshayne@gmail.com"
+                >engrkristianneshayne@gmail.com</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">WL</td>
+            <td data-label="Mobile">
+              <a href="tel:09562112690">0956 211 2690</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:erwiladrias@gmail.com">erwiladrias@gmail.com</a>
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">XD</td>
+            <td data-label="Mobile">
+              <a href="tel:09324130952">0932 413 0952</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:rovicneo@gmail.com">rovicneo@gmail.com</a>
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">VY</td>
+            <td data-label="Mobile">
+              <a href="tel:09177060312">0917 706 0312</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:v1ctoryankee@yahoo.com">v1ctoryankee@yahoo.com</a>
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">YQ</td>
+            <td data-label="Mobile">
+              <a href="tel:09674299939">0967 429 9939</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:tolentinoedsonmelo@gmail.com"
+                >tolentinoedsonmelo@gmail.com</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">YY</td>
+            <td data-label="Mobile">
+              <a href="tel:09950362241">0995 036 2241</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:yapjinrick@gmail.com">yapjinrick@gmail.com</a>
+            </td>
+          </tr>
+          <tr>
+            <td data-label="WS">SHE</td>
+            <td data-label="Mobile">
+              <a href="tel:09105033071">0910 503 3071</a>
+            </td>
+            <td data-label="Email">
+              <a href="mailto:shelovindino@gmail.com">shelovindino@gmail.com</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
-      <div>
-        <button onclick="copyTable()">Copy</button>
-        <button onclick="exportToExcel()">Excel</button>
-        <button onclick="exportToPDF()">PDF</button>
-      </div>
+      <footer class="site-footer">
+        <div class="footer-content">
+          <p>Manila Control Tower &copy; <span id="currentYear"></span></p>
+        </div>
+      </footer>
     </div>
-
-    <table id="directoryTable">
-      <thead>
-        <tr>
-          <th onclick="sortTable(0)">WS</th>
-          <th onclick="sortTable(1)">Mobile</th>
-          <th onclick="sortTable(2)">Email</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td data-label="WS">AB</td>
-          <td data-label="Mobile">
-            <a href="tel:09694873703">0969 487 3703</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:brionesalexanderemmanuel@gmail.com"
-              >brionesalexanderemmanuel@gmail.com</a
-            >
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">AE</td>
-          <td data-label="Mobile">
-            <a href="tel:09175900383">0917 590 0383</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:ae.umotoy@gmail.com">ae.umotoy@gmail.com</a>
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">AL</td>
-          <td data-label="Mobile">
-            <a href="tel:09568307294">0956 830 7294</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:mkmanabat@gmail.com">mkmanabat@gmail.com</a>
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">AO</td>
-          <td data-label="Mobile">
-            <a href="tel:09190032873">0919 003 2873</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:joaz.lagundino@gmail.com"
-              >joaz.lagundino@gmail.com</a
-            >
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">BI</td>
-          <td data-label="Mobile">
-            <a href="tel:09175822660">0917 582 2660</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:mhel_b28@yahoo.com">mhel_b28@yahoo.com</a>
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">BH</td>
-          <td data-label="Mobile">
-            <a href="tel:09298468980">0929 846 8980</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:pfvespino@gmail.com">pfvespino@gmail.com</a>
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">BM</td>
-          <td data-label="Mobile">
-            <a href="tel:09338787129">0933 878 7129</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:femalte333@yahoo.com">femalte333@yahoo.com</a>
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">BU</td>
-          <td data-label="Mobile">
-            <a href="tel:09175135770">0917 513 5770</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:b.collantes54@gmail.com">b.collantes54@gmail.com</a>
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">CJ</td>
-          <td data-label="Mobile">
-            <a href="tel:09950388227">0995 038 8227</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:sikatuna05@gmail.com">sikatuna05@gmail.com</a>
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">DN</td>
-          <td data-label="Mobile">
-            <a href="tel:09661622709">0966 162 2709</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:earlross.espere@gmail.com"
-              >earlross.espere@gmail.com</a
-            >
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">EO</td>
-          <td data-label="Mobile">
-            <a href="tel:09266914063">0926 691 4063</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:catmunansolomoniii@gmail.com"
-              >catmunansolomoniii@gmail.com</a
-            >
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">EQ</td>
-          <td data-label="Mobile">
-            <a href="tel:09308588000">0930 858 8000</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:eusalemq@gmail.com">eusalemq@gmail.com</a>
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">EZ</td>
-          <td data-label="Mobile">
-            <a href="tel:09162399568">0916 239 9568</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:brenda_vibal@yahoo.com">brenda_vibal@yahoo.com</a>
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">FS</td>
-          <td data-label="Mobile">
-            <a href="tel:09171602910">0917 160 2910</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:phicsulliville@gmail.com"
-              >phicsulliville@gmail.com</a
-            >
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">GK</td>
-          <td data-label="Mobile">
-            <a href="tel:09954598095">0995 459 8095</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:jgbalomaga14@gmail.com">jgbalomaga14@gmail.com</a>
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">HY</td>
-          <td data-label="Mobile">
-            <a href="tel:09178365785">0917 836 5785</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:hilaryclaudio@gmail.com">hilaryclaudio@gmail.com</a>
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">HZ</td>
-          <td data-label="Mobile">
-            <a href="tel:09778047228">0977 804 7228</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:mayhyacinth_gocotano@yahoo.com"
-              >mayhyacinth_gocotano@yahoo.com</a
-            >
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">ID</td>
-          <td data-label="Mobile">
-            <a href="tel:09365667363">0936 566 7363</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:floyd.e.aquino@gmail.com"
-              >floyd.e.aquino@gmail.com</a
-            >
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">II</td>
-          <td data-label="Mobile">
-            <a href="tel:09280674953">0928 067 4953</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:itsme_bourne28@live.com">itsme_bourne28@live.com</a>
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">JL</td>
-          <td data-label="Mobile">
-            <a href="tel:09239534662">0923 953 4662</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:jcbanthony@yahoo.com">jcbanthony@yahoo.com</a>
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">JV</td>
-          <td data-label="Mobile">
-            <a href="tel:09054285214">0905 428 5214</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:jovenciourbien.aero@gmail.com"
-              >jovenciourbien.aero@gmail.com</a
-            >
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">KI</td>
-          <td data-label="Mobile">
-            <a href="tel:09271796346">0927 179 6346</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:kinette.aaronm@gmail.com"
-              >kinette.aaronm@gmail.com</a
-            >
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">KH</td>
-          <td data-label="Mobile">
-            <a href="tel:09993418859">0999 341 8859</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:andreitrinidad067@gmail.com"
-              >andreitrinidad067@gmail.com</a
-            >
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">LF</td>
-          <td data-label="Mobile">
-            <a href="tel:09171233125">0917 123 3125</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:lyell.escoto@gmail.com">lyell.escoto@gmail.com</a>
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">LQ</td>
-          <td data-label="Mobile">
-            <a href="tel:09152042772">0915 204 2772</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:rainier.suico@gmail.com">rainier.suico@gmail.com</a>
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">LV</td>
-          <td data-label="Mobile">
-            <a href="tel:09239286912">0923 928 6912</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:jericavillamor090@gmail.com"
-              >jericavillamor090@gmail.com</a
-            >
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">MH</td>
-          <td data-label="Mobile">
-            <a href="tel:09178998129">0917 899 8129</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:edcelcelestino@gmail.com"
-              >edcelcelestino@gmail.com</a
-            >
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">NI</td>
-          <td data-label="Mobile">
-            <a href="tel:09173179909">0917 317 9909</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:manelvillar20@yahoo.com">manelvillar20@yahoo.com</a>
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">OO</td>
-          <td data-label="Mobile">
-            <a href="tel:09065965697">0906 596 5697</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:jetmatantenor14@gmail.com"
-              >jetmatantenor14@gmail.com</a
-            >
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">OT</td>
-          <td data-label="Mobile">
-            <a href="tel:09260392932">0926 039 2932</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:rormartin47@gmail.com">rormartin47@gmail.com</a>
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">OZ</td>
-          <td data-label="Mobile">
-            <a href="tel:09171185985">0917 118 5985</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:angelicamariesgsantiago@gmail.com"
-              >angelicamariesgsantiago@gmail.com</a
-            >
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">PJ</td>
-          <td data-label="Mobile">
-            <a href="tel:09951755578">0995 175 5578</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:jaime.formanes@gmail.com"
-              >jaime.formanes@gmail.com</a
-            >
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">PO</td>
-          <td data-label="Mobile">
-            <a href="tel:09175860128">0917 586 0128</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:claid.prieto@gmail.com">claid.prieto@gmail.com</a>
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">PQ</td>
-          <td data-label="Mobile">
-            <a href="tel:09177900726">0917 790 0726</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:aian_pascua@yahoo.com">aian_pascua@yahoo.com</a>
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">PU</td>
-          <td data-label="Mobile">
-            <a href="tel:09224795074">0922 479 5074</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:plaganao@gmail.com">plaganao@gmail.com</a>
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">PV</td>
-          <td data-label="Mobile">
-            <a href="tel:09994078050">0999 407 8050</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:ernesto.botin.v@gmail.com"
-              >ernesto.botin.v@gmail.com</a
-            >
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">QP</td>
-          <td data-label="Mobile">
-            <a href="tel:09279152979">0927 915 2979</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:monettemalasmas@gmail.com"
-              >monettemalasmas@gmail.com</a
-            >
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">QZ</td>
-          <td data-label="Mobile">
-            <a href="tel:09772447224">0977 244 7224</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:urbiztondorenanjoseph@gmail.com"
-              >urbiztondorenanjoseph@gmail.com</a
-            >
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">RU</td>
-          <td data-label="Mobile">
-            <a href="tel:09453626109">0945 362 6109</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:r_licupa@yahoo.com">r_licupa@yahoo.com</a>
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">SA</td>
-          <td data-label="Mobile">
-            <a href="tel:09214620386">0921 462 0386</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:alcidsheila@gmail.com">alcidsheila@gmail.com</a>
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">SP</td>
-          <td data-label="Mobile">
-            <a href="tel:09275808907">0927 580 8907</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:stepmaygramirez31@gmail.com"
-              >stepmaygramirez31@gmail.com</a
-            >
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">SY</td>
-          <td data-label="Mobile">
-            <a href="tel:09688800116">0968 880 0116</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:engrkristianneshayne@gmail.com"
-              >engrkristianneshayne@gmail.com</a
-            >
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">WL</td>
-          <td data-label="Mobile">
-            <a href="tel:09562112690">0956 211 2690</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:erwiladrias@gmail.com">erwiladrias@gmail.com</a>
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">XD</td>
-          <td data-label="Mobile">
-            <a href="tel:09324130952">0932 413 0952</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:rovicneo@gmail.com">rovicneo@gmail.com</a>
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">VY</td>
-          <td data-label="Mobile">
-            <a href="tel:09177060312">0917 706 0312</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:v1ctoryankee@yahoo.com">v1ctoryankee@yahoo.com</a>
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">YQ</td>
-          <td data-label="Mobile">
-            <a href="tel:09674299939">0967 429 9939</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:tolentinoedsonmelo@gmail.com"
-              >tolentinoedsonmelo@gmail.com</a
-            >
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">YY</td>
-          <td data-label="Mobile">
-            <a href="tel:09950362241">0995 036 2241</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:yapjinrick@gmail.com">yapjinrick@gmail.com</a>
-          </td>
-        </tr>
-        <tr>
-          <td data-label="WS">SHE</td>
-          <td data-label="Mobile">
-            <a href="tel:09105033071">0910 503 3071</a>
-          </td>
-          <td data-label="Email">
-            <a href="mailto:shelovindino@gmail.com">shelovindino@gmail.com</a>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
     <script>
       // Dark mode
       document.getElementById("darkToggle").addEventListener("change", () => {
@@ -777,6 +852,33 @@
           });
         });
 
+      const container = document.querySelector(".page-container");
+      const table = document.getElementById("directoryTable");
+
+      function adjustFooterPosition() {
+        const tableBottom = table.getBoundingClientRect().bottom;
+        const windowBottom = window.innerHeight;
+
+        // If table is short, make footer stick
+        if (tableBottom < windowBottom - 100) {
+          container.classList.add("sticky-footer");
+        } else {
+          container.classList.remove("sticky-footer");
+        }
+      }
+
+      // Run on page load and after each filter/search
+      window.addEventListener("load", adjustFooterPosition);
+      window.addEventListener("resize", adjustFooterPosition);
+
+      // Modify this depending on your filtering logic:
+      const searchInput = document.querySelector("input[type='search']");
+      if (searchInput) {
+        searchInput.addEventListener("input", () => {
+          setTimeout(adjustFooterPosition, 100); // Delay to wait for DOM update
+        });
+      }
+
       // Export to Excel
       function exportToExcel() {
         const wb = XLSX.utils.table_to_book(
@@ -803,6 +905,10 @@
         doc.autoTable({ head: [data[0]], body: data.slice(1), startY: 20 });
         doc.save("directory.pdf");
       }
+
+      // Set current year dynamically
+      document.getElementById("currentYear").textContent =
+        new Date().getFullYear();
 
       // Copy to Clipboard
       function copyTable() {
