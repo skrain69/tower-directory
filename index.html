@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Online Directory</title>
+
+    <!-- Aviation Font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- SheetJS (Excel) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <!-- jsPDF + AutoTable -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.7.0/jspdf.plugin.autotable.min.js"></script>
+
+    <style>
+      :root {
+        --bg-light: #f4f7fa;
+        --bg-dark: #1e1f26;
+        --text-light: #1e1f26;
+        --text-dark: #f4f7fa;
+        --accent: #005ce6;
+        --font-family: "Share Tech Mono", monospace;
+      }
+
+      a {
+        color: var(--text-light);
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      a:hover {
+        text-decoration: underline;
+        color: #003cb3; /* Deeper aviation blue on hover */
+      }
+
+      body.dark a {
+        color: #88bfff; /* Soft aviation blue for dark mode */
+      }
+
+      body.dark a:hover {
+        color: #cce5ff; /* Lighter on hover for visibility */
+      }
+
+      body {
+        margin: 0;
+        font-family: var(--font-family);
+        background-color: var(--bg-light);
+        color: var(--text-light);
+        transition: background-color 0.3s, color 0.3s;
+      }
+
+      body.dark {
+        background-color: var(--bg-dark);
+        color: var(--text-dark);
+      }
+
+      header {
+        padding: 1rem;
+        background: var(--accent);
+        color: white;
+        text-align: center;
+        font-size: 1.5rem;
+      }
+
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+      }
+
+      .controls > * {
+        font-family: var(--font-family);
+      }
+
+      input[type="text"] {
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        min-width: 200px;
+      }
+
+      button {
+        padding: 0.5rem 1.2rem;
+        background-color: transparent;
+        color: var(--accent);
+        border: 2px solid var(--accent);
+        border-radius: 6px;
+        font-family: var(--font-family);
+        font-size: 0.95rem;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: none;
+      }
+
+      button:hover {
+        background-color: var(--accent);
+        color: #fff;
+      }
+
+      body.dark button {
+        color: #fff;
+        border-color: #fff;
+      }
+
+      body.dark button:hover {
+        background-color: #fff;
+        color: var(--bg-dark);
+      }
+
+      .controls button {
+        margin-left: 0.5rem;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0 auto 2rem auto;
+        max-width: 100%;
+      }
+
+      th,
+      td {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #ccc;
+        text-align: left;
+        cursor: pointer;
+      }
+
+      /* tr:nth-child(even) {
+        background-color: #f2f2f2;
+      } */
+
+      /* body.dark tr:nth-child(even) {
+        background-color: #2a2a2a;
+      } */
+
+      th:hover {
+        background: #ddd;
+      }
+
+      body.dark th:hover {
+        background: #333;
+      }
+
+      .dark-toggle {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      @media (max-width: 768px) {
+        .controls {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        table,
+        thead,
+        tbody,
+        th,
+        td,
+        tr {
+          display: block;
+        }
+
+        .controls button {
+          width: 100%;
+          margin: 0.25rem 0;
+        }
+        thead {
+          display: none;
+        }
+
+        tr {
+          margin-bottom: 1rem;
+          background: #eee;
+          border-radius: 5px;
+          padding: 0.5rem;
+        }
+
+        body.dark tr {
+          background: #333;
+        }
+
+        td {
+          display: flex;
+          justify-content: space-between;
+          padding: 0.5rem 1rem;
+        }
+
+        td::before {
+          content: attr(data-label);
+          font-weight: bold;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>MNL TWR Online Directory</header>
+
+    <div class="controls">
+      <div class="dark-toggle">
+        <input type="checkbox" id="darkToggle" />
+        <label for="darkToggle">Dark Mode</label>
+      </div>
+
+      <input type="text" id="searchInput" placeholder="Search WS" />
+
+      <div>
+        <button onclick="copyTable()">Copy</button>
+        <button onclick="exportToExcel()">Excel</button>
+        <button onclick="exportToPDF()">PDF</button>
+      </div>
+    </div>
+
+    <table id="directoryTable">
+      <thead>
+        <tr>
+          <th onclick="sortTable(0)">WS</th>
+          <th onclick="sortTable(1)">Mobile</th>
+          <th onclick="sortTable(2)">Email</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td data-label="WS">AB</td>
+          <td data-label="Mobile">
+            <a href="callto:09694873703">0969 487 3703</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:brionesalexanderemmanuel@gmail.com"
+              >brionesalexanderemmanuel@gmail.com</a
+            >
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">AE</td>
+          <td data-label="Mobile">
+            <a href="callto:09175900383">0917 590 0383</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:ae.umotoy@gmail.com">ae.umotoy@gmail.com</a>
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">AL</td>
+          <td data-label="Mobile">
+            <a href="callto:09568307294">0956 830 7294</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:mkmanabat@gmail.com">mkmanabat@gmail.com</a>
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">AO</td>
+          <td data-label="Mobile">
+            <a href="callto:09190032873">0919 003 2873</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:joaz.lagundino@gmail.com"
+              >joaz.lagundino@gmail.com</a
+            >
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">BI</td>
+          <td data-label="Mobile">
+            <a href="callto:09175822660">0917 582 2660</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:mhel_b28@yahoo.com">mhel_b28@yahoo.com</a>
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">BH</td>
+          <td data-label="Mobile">
+            <a href="callto:09298468980">0929 846 8980</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:pfvespino@gmail.com">pfvespino@gmail.com</a>
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">BM</td>
+          <td data-label="Mobile">
+            <a href="callto:09338787129">0933 878 7129</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:femalte333@yahoo.com">femalte333@yahoo.com</a>
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">BU</td>
+          <td data-label="Mobile">
+            <a href="callto:09175135770">0917 513 5770</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:b.collantes54@gmail.com">b.collantes54@gmail.com</a>
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">CJ</td>
+          <td data-label="Mobile">
+            <a href="callto:09950388227">0995 038 8227</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:sikatuna05@gmail.com">sikatuna05@gmail.com</a>
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">DN</td>
+          <td data-label="Mobile">
+            <a href="callto:09661622709">0966 162 2709</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:earlross.espere@gmail.com"
+              >earlross.espere@gmail.com</a
+            >
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">EO</td>
+          <td data-label="Mobile">
+            <a href="callto:09266914063">0926 691 4063</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:catmunansolomoniii@gmail.com"
+              >catmunansolomoniii@gmail.com</a
+            >
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">EQ</td>
+          <td data-label="Mobile">
+            <a href="callto:09308588000">0930 858 8000</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:eusalemq@gmail.com">eusalemq@gmail.com</a>
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">EZ</td>
+          <td data-label="Mobile">
+            <a href="callto:09162399568">0916 239 9568</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:brenda_vibal@yahoo.com">brenda_vibal@yahoo.com</a>
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">FS</td>
+          <td data-label="Mobile">
+            <a href="callto:09171602910">0917 160 2910</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:phicsulliville@gmail.com"
+              >phicsulliville@gmail.com</a
+            >
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">GK</td>
+          <td data-label="Mobile">
+            <a href="callto:09954598095">0995 459 8095</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:jgbalomaga14@gmail.com">jgbalomaga14@gmail.com</a>
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">HY</td>
+          <td data-label="Mobile">
+            <a href="callto:09178365785">0917 836 5785</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:hilaryclaudio@gmail.com">hilaryclaudio@gmail.com</a>
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">HZ</td>
+          <td data-label="Mobile">
+            <a href="callto:09778047228">0977 804 7228</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:mayhyacinth_gocotano@yahoo.com"
+              >mayhyacinth_gocotano@yahoo.com</a
+            >
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">ID</td>
+          <td data-label="Mobile">
+            <a href="callto:09365667363">0936 566 7363</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:floyd.e.aquino@gmail.com"
+              >floyd.e.aquino@gmail.com</a
+            >
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">II</td>
+          <td data-label="Mobile">
+            <a href="callto:09280674953">0928 067 4953</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:itsme_bourne28@live.com">itsme_bourne28@live.com</a>
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">JL</td>
+          <td data-label="Mobile">
+            <a href="callto:09239534662">0923 953 4662</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:jcbanthony@yahoo.com">jcbanthony@yahoo.com</a>
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">JV</td>
+          <td data-label="Mobile">
+            <a href="callto:09054285214">0905 428 5214</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:jovenciourbien.aero@gmail.com"
+              >jovenciourbien.aero@gmail.com</a
+            >
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">KI</td>
+          <td data-label="Mobile">
+            <a href="callto:09271796346">0927 179 6346</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:kinette.aaronm@gmail.com"
+              >kinette.aaronm@gmail.com</a
+            >
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">KH</td>
+          <td data-label="Mobile">
+            <a href="callto:09993418859">0999 341 8859</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:andreitrinidad067@gmail.com"
+              >andreitrinidad067@gmail.com</a
+            >
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">LF</td>
+          <td data-label="Mobile">
+            <a href="callto:09171233125">0917 123 3125</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:lyell.escoto@gmail.com">lyell.escoto@gmail.com</a>
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">LQ</td>
+          <td data-label="Mobile">
+            <a href="callto:09152042772">0915 204 2772</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:rainier.suico@gmail.com">rainier.suico@gmail.com</a>
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">LV</td>
+          <td data-label="Mobile">
+            <a href="callto:09239286912">0923 928 6912</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:jericavillamor090@gmail.com"
+              >jericavillamor090@gmail.com</a
+            >
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">MH</td>
+          <td data-label="Mobile">
+            <a href="callto:09178998129">0917 899 8129</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:edcelcelestino@gmail.com"
+              >edcelcelestino@gmail.com</a
+            >
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">NI</td>
+          <td data-label="Mobile">
+            <a href="callto:09173179909">0917 317 9909</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:manelvillar20@yahoo.com">manelvillar20@yahoo.com</a>
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">OO</td>
+          <td data-label="Mobile">
+            <a href="callto:09065965697">0906 596 5697</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:jetmatantenor14@gmail.com"
+              >jetmatantenor14@gmail.com</a
+            >
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">OT</td>
+          <td data-label="Mobile">
+            <a href="callto:09260392932">0926 039 2932</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:rormartin47@gmail.com">rormartin47@gmail.com</a>
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">OZ</td>
+          <td data-label="Mobile">
+            <a href="callto:09171185985">0917 118 5985</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:angelicamariesgsantiago@gmail.com"
+              >angelicamariesgsantiago@gmail.com</a
+            >
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">PJ</td>
+          <td data-label="Mobile">
+            <a href="callto:09951755578">0995 175 5578</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:jaime.formanes@gmail.com"
+              >jaime.formanes@gmail.com</a
+            >
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">PO</td>
+          <td data-label="Mobile">
+            <a href="callto:09175860128">0917 586 0128</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:claid.prieto@gmail.com">claid.prieto@gmail.com</a>
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">PQ</td>
+          <td data-label="Mobile">
+            <a href="callto:09177900726">0917 790 0726</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:aian_pascua@yahoo.com">aian_pascua@yahoo.com</a>
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">PU</td>
+          <td data-label="Mobile">
+            <a href="callto:09224795074">0922 479 5074</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:plaganao@gmail.com">plaganao@gmail.com</a>
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">PV</td>
+          <td data-label="Mobile">
+            <a href="callto:09994078050">0999 407 8050</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:ernesto.botin.v@gmail.com"
+              >ernesto.botin.v@gmail.com</a
+            >
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">QP</td>
+          <td data-label="Mobile">
+            <a href="callto:09279152979">0927 915 2979</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:monettemalasmas@gmail.com"
+              >monettemalasmas@gmail.com</a
+            >
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">QZ</td>
+          <td data-label="Mobile">
+            <a href="callto:09772447224">0977 244 7224</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:urbiztondorenanjoseph@gmail.com"
+              >urbiztondorenanjoseph@gmail.com</a
+            >
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">RU</td>
+          <td data-label="Mobile">
+            <a href="callto:09453626109">0945 362 6109</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:r_licupa@yahoo.com">r_licupa@yahoo.com</a>
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">SA</td>
+          <td data-label="Mobile">
+            <a href="callto:09214620386">0921 462 0386</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:alcidsheila@gmail.com">alcidsheila@gmail.com</a>
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">SP</td>
+          <td data-label="Mobile">
+            <a href="callto:09275808907">0927 580 8907</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:stepmaygramirez31@gmail.com"
+              >stepmaygramirez31@gmail.com</a
+            >
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">SY</td>
+          <td data-label="Mobile">
+            <a href="callto:09688800116">0968 880 0116</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:engrkristianneshayne@gmail.com"
+              >engrkristianneshayne@gmail.com</a
+            >
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">WL</td>
+          <td data-label="Mobile">
+            <a href="callto:09562112690">0956 211 2690</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:erwiladrias@gmail.com">erwiladrias@gmail.com</a>
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">XD</td>
+          <td data-label="Mobile">
+            <a href="callto:09324130952">0932 413 0952</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:rovicneo@gmail.com">rovicneo@gmail.com</a>
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">VY</td>
+          <td data-label="Mobile">
+            <a href="callto:09177060312">0917 706 0312</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:v1ctoryankee@yahoo.com">v1ctoryankee@yahoo.com</a>
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">YQ</td>
+          <td data-label="Mobile">
+            <a href="callto:09674299939">0967 429 9939</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:tolentinoedsonmelo@gmail.com"
+              >tolentinoedsonmelo@gmail.com</a
+            >
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">YY</td>
+          <td data-label="Mobile">
+            <a href="callto:09950362241">0995 036 2241</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:yapjinrick@gmail.com">yapjinrick@gmail.com</a>
+          </td>
+        </tr>
+        <tr>
+          <td data-label="WS">SHE</td>
+          <td data-label="Mobile">
+            <a href="callto:09105033071">0910 503 3071</a>
+          </td>
+          <td data-label="Email">
+            <a href="mailto:shelovindino@gmail.com">shelovindino@gmail.com</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <script>
+      // Dark mode
+      document.getElementById("darkToggle").addEventListener("change", () => {
+        document.body.classList.toggle("dark");
+      });
+
+      // Sort table
+      function sortTable(colIndex) {
+        const table = document.getElementById("directoryTable");
+        let switching = true,
+          dir = "asc",
+          switchCount = 0;
+        while (switching) {
+          switching = false;
+          let rows = table.rows;
+          for (let i = 1; i < rows.length - 1; i++) {
+            let x = rows[i].getElementsByTagName("TD")[colIndex];
+            let y = rows[i + 1].getElementsByTagName("TD")[colIndex];
+            let shouldSwitch =
+              dir === "asc"
+                ? x.innerText.toLowerCase() > y.innerText.toLowerCase()
+                : x.innerText.toLowerCase() < y.innerText.toLowerCase();
+            if (shouldSwitch) {
+              rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+              switching = true;
+              switchCount++;
+              break;
+            }
+          }
+          if (!switchCount && dir === "asc") {
+            dir = "desc";
+            switching = true;
+          }
+        }
+      }
+
+      // Search/filter
+      document
+        .getElementById("searchInput")
+        .addEventListener("keyup", function () {
+          const searchTerm = this.value.trim().toLowerCase();
+          const rows = document.querySelectorAll("#directoryTable tbody tr");
+
+          rows.forEach((row) => {
+            const cells = row.querySelectorAll("td");
+            const rowText = Array.from(cells).map((cell) =>
+              cell.textContent.trim().toLowerCase()
+            );
+
+            // Exact match on any full cell content
+            const match = cells[0].textContent
+              .trim()
+              .toLowerCase()
+              .includes(searchTerm);
+
+            // Optional: To restrict it to WS only (first column only), use this instead:
+            // const match = rowText[0] && rowText[0].includes(searchTerm);
+
+            row.style.display = match ? "" : "none";
+          });
+        });
+
+      // Export to Excel
+      function exportToExcel() {
+        const wb = XLSX.utils.table_to_book(
+          document.getElementById("directoryTable"),
+          { sheet: "Directory" }
+        );
+        XLSX.writeFile(wb, "directory.xlsx");
+      }
+
+      // Export to PDF
+      function exportToPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const table = document.getElementById("directoryTable");
+        let data = [];
+        for (let row of table.rows) {
+          let rowData = [];
+          for (let cell of row.cells) {
+            rowData.push(cell.innerText);
+          }
+          data.push(rowData);
+        }
+        doc.text("MNL TWR Online Directory", 14, 15);
+        doc.autoTable({ head: [data[0]], body: data.slice(1), startY: 20 });
+        doc.save("directory.pdf");
+      }
+
+      // Copy to Clipboard
+      function copyTable() {
+        const table = document.getElementById("directoryTable");
+        let text = "";
+        for (let row of table.rows) {
+          const cells = Array.from(row.cells).map((cell) => cell.innerText);
+          text += cells.join("\t") + "\n";
+        }
+        navigator.clipboard.writeText(text).then(() => {
+          alert("Table copied to clipboard!");
+        });
+      }
+    </script>
+  </body>
+</html>
