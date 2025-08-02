@@ -173,10 +173,6 @@
           display: block;
         }
 
-        .controls button {
-          width: 100%;
-          margin: 0.25rem 0;
-        }
         thead {
           display: none;
         }
@@ -195,18 +191,22 @@
         td {
           display: flex;
           justify-content: space-between;
+          align-items: flex-start;
           padding: 0.5rem 1rem;
-          gap: 0.5rem; /* add this */
-          flex-wrap: wrap; /* wrap text when needed */
-        }
-
-        td a {
-          word-break: break-all; /* prevent overflow of long emails */
+          gap: 0.5rem;
         }
 
         td::before {
           content: attr(data-label);
           font-weight: bold;
+          flex: 1;
+          min-width: 90px; /* Ensures label is wide enough */
+        }
+
+        td a {
+          flex: 2;
+          text-align: right;
+          word-break: break-word;
         }
       }
     </style>
